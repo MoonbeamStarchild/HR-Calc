@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Heart Rate Zone Calculator</title>
+<style>
+  body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f2f2f2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+  }
+  .container {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 500px;
+  }
+  h1 {
+    text-align: center;
+    color: #333;
+  }
+  form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  label {
+    font-weight: bold;
+    color: #555;
+  }
+  input[type="number"] {
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  button {
+    padding: 0.75rem;
+    border: none;
+    border-radius: 4px;
+    background: #007BFF;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+  }
+  button:hover {
+    background: #0056b3;
+  }
+  .results {
+    margin-top: 1.5rem;
+  }
+  .zone {
+    background: #e9ecef;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 0.5rem;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>Heart Rate Zone Calculator</h1>
+  <form id="hrForm">
+    <div>
+      <label for="age">Age (years):</label>
+      <input type="number" id="age" required min="1" placeholder="e.g., 30">
+    </div>
+    <div>
+      <label for="restingHR">Resting Heart Rate (bpm):</label>
+      <input type="number" id="restingHR" required min="1" placeholder="e.g., 60">
+    </div>
+    <button type="submit">Calculate Zones</button>
+  </form>
+  <div id="results" class="results"></div>
+</div>
+<script>
+document.getElementById('hrForm').addEventListener('submit', function(e) {
+  e.preventDefault();
+  const age = parseInt(document.getElementById('age').value);
+  const restingHR = parseInt(document.getElementById('restingHR').value);
+  if(isNaN(age) || isNaN(restingHR)) {
+    alert('Please enter valid numbers.');
+    return;
+  }
+  const maxHR = 220 - age;
+  const hrr = maxHR - restingHR;
+  // Define zones: using percentages of HRR plus resting HR
+  const zones = [
+    { zone: 'Zone 1', range: [0.5, 0.6], description: 'Warm-Up' },
+    { zone: 'Zone 2', range: [0.6, 0.7], description: 'Fat Burning' },
+    { zone: 'Zone 3', range: [0.7, 0.8], description: 'Cardio' },
+    { zone: 'Zone 4', range: [0.8, 0.9], description: 'Hard' },
+    { zone: 'Zone 5', range: [0.9, 1.0], description: 'Peak' }
+  ];
+  let resultsHTML = `<p>Max HR: ${maxHR} bpm, HRR: ${hrr} bpm</p>`;
+  zones.forEach(z => {
+    const lower = Math.round((hrr * z.range[0]) + restingHR);
+    const upper = Math.round((hrr * z.range[1]) + restingHR);
+    resultsHTML += `<div class="zone"><strong>${z.zone} (${z.description}):</strong> ${lower} - ${upper} bpm</div>`;
+  });
+  document.getElementById('results').innerHTML = resultsHTML;
+});
+</script>
+</body>
+</html>
